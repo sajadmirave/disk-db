@@ -6,9 +6,13 @@ class Disk {
         this.path = 'database';
 
         // create folder structure
-        fs.mkdirSync(path.join(__dirname, this.path));
+
     }
 
+
+    createStructure() {
+        fs.mkdirSync(path.join(__dirname, this.path));
+    }
 
     generateUUID(len) {
         const char = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890@$#"
@@ -47,6 +51,53 @@ class Disk {
         } catch (error) {
             console.error('An error occurred while writing to data.json:', error);
         }
+    }
+
+    findById(collection, _id) {
+        let data = fs.readFileSync(path.join(__dirname, this.path, `${collection}.json`))
+        let content = JSON.parse(data)
+
+        const result = content.filter((item) => item._id === _id)
+
+        return result[0]
+    }
+
+    findOne(collection, query) {
+        let data = fs.readFileSync(path.join(__dirname, this.path, `${collection}.json`))
+        const content = JSON.parse(data)
+
+        // return content.filter((item) => item === JSON.stringify(query))
+        const result = content.find((item) => {
+            // find property in obj
+            for (const key in query) {
+                if (item[key] !== query[key]) {
+                    return false
+                }
+
+                return true
+            }
+        })
+
+        return result
+    }
+
+    findMany(collection, query) {
+        let data = fs.readFileSync(path.join(__dirname, this.path, `${collection}.json`))
+        const content = JSON.parse(data)
+
+        // return content.filter((item) => item === JSON.stringify(query))
+        const result = content.filter((item) => {
+            // find property in obj
+            for (const key in query) {
+                if (item[key] !== query[key]) {
+                    return false
+                }
+
+                return true
+            }
+        })
+
+        return result
     }
 }
 
